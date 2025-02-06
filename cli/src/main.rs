@@ -99,8 +99,8 @@ fn main() -> ExitCode {
     stdout_writer.write_reports(&reports, runner.file_library());
 
     // Analyze functions and templates in user provided input files.
-    runner.analyze_functions(&mut stdout_writer, true);
-    runner.analyze_templates(&mut stdout_writer, true);
+    runner.analyze_functions(&mut stdout_writer, false);
+    runner.analyze_templates(&mut stdout_writer, false);
 
     // If a Sarif file is passed to the program we write the reports to it.
     if let Some(sarif_file) = options.sarif_file {

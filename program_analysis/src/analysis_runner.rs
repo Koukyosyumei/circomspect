@@ -1,5 +1,5 @@
 use log::{debug, trace};
-use std::path::PathBuf;
+use std::{collections::HashSet, path::PathBuf};
 use std::collections::HashMap;
 
 use parser::ParseResult;
@@ -20,6 +20,7 @@ use program_structure::template_library::TemplateLibrary;
 use crate::{
     analysis_context::{AnalysisContext, AnalysisError},
     get_analysis_passes, config,
+    gather_information::gather_templates_expression,
 };
 
 type CfgCache = HashMap<String, Cfg>;
@@ -45,6 +46,7 @@ pub struct AnalysisRunner {
     template_reports: ReportCache,
     /// Reports created during CFG generation.
     function_reports: ReportCache,
+    callee_ids: HashSet<String>,
 }
 
 impl AnalysisRunner {
@@ -61,6 +63,11 @@ impl AnalysisRunner {
         let reports =
             match parser::parse_files(input_files, &self.libraries, &config::COMPILER_VERSION) {
                 ParseResult::Program(program, warnings) => {
+                    gather_templates_expression(
+                        program.main_expression(),
+                        &mut self.callee_ids,
+                        &program,
+                    );
                     self.template_asts = program.templates;
                     self.function_asts = program.functions;
                     self.file_library = program.file_library;
@@ -105,7 +112,9 @@ impl AnalysisRunner {
         self.template_asts
             .iter()
             .filter_map(|(name, ast)| {
-                if !user_input_only || self.file_library.is_user_input(ast.get_file_id()) {
+                if (!user_input_only && self.callee_ids.contains(name))
+                    || self.file_library.is_user_input(ast.get_file_id())
+                {
                     Some(name)
                 } else {
                     None
@@ -120,7 +129,9 @@ impl AnalysisRunner {
         self.function_asts
             .iter()
             .filter_map(|(name, ast)| {
-                if !user_input_only || self.file_library.is_user_input(ast.get_file_id()) {
+                if (!user_input_only && self.callee_ids.contains(name))
+                    || self.file_library.is_user_input(ast.get_file_id())
+                {
                     Some(name)
                 } else {
                     None
