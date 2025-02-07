@@ -9,6 +9,7 @@ pub mod constraint_analysis;
 pub mod taint_analysis;
 pub mod analysis_context;
 pub mod analysis_runner;
+pub mod gather_information;
 pub mod config;
 
 // Intra-process analysis passes.

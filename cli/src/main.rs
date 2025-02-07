@@ -94,13 +94,13 @@ fn main() -> ExitCode {
     let user_inputs = runner.file_library().user_inputs().clone();
     let mut stdout_writer = CachedStdoutWriter::new(options.verbose)
         .add_filter(move |report: &Report| filter_by_level(report, &options.output_level))
-        .add_filter(move |report: &Report| filter_by_file(report, &user_inputs))
+        //.add_filter(move |report: &Report| filter_by_file(report, &user_inputs))
         .add_filter(move |report: &Report| filter_by_id(report, &allow_list));
     stdout_writer.write_reports(&reports, runner.file_library());
 
     // Analyze functions and templates in user provided input files.
-    runner.analyze_functions(&mut stdout_writer, true);
-    runner.analyze_templates(&mut stdout_writer, true);
+    runner.analyze_functions(&mut stdout_writer, false);
+    runner.analyze_templates(&mut stdout_writer, false);
 
     // If a Sarif file is passed to the program we write the reports to it.
     if let Some(sarif_file) = options.sarif_file {
