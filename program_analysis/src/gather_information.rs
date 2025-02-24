@@ -14,11 +14,13 @@ pub fn gather_templates_expression(
 ) {
     match expr {
         Expression::Call { id, .. } => {
-            result.insert(id.to_string());
-            if let Some(template) = program_archive.templates.get(id) {
-                gather_templates_statement(template.get_body(), result, program_archive);
-            } else if let Some(func) = program_archive.functions.get(id) {
-                gather_templates_statement(func.get_body(), result, program_archive);
+            if !result.contains(id) {
+                result.insert(id.to_string());
+                if let Some(template) = program_archive.templates.get(id) {
+                    gather_templates_statement(template.get_body(), result, program_archive);
+                } else if let Some(func) = program_archive.functions.get(id) {
+                    gather_templates_statement(func.get_body(), result, program_archive);
+                }
             }
         }
         Expression::AnonymousComponent { id, .. } => {
