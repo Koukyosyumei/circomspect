@@ -65,6 +65,7 @@ pub fn run_complexity_analysis(cfg: &Cfg) -> ReportCollection {
 
     let mut reports = ReportCollection::new();
     // Generate a report if the cyclomatic complexity is high.
+    /*
     if complexity > MAX_CYCLOMATIC_COMPLEXITY {
         reports.push(
             CyclomaticComplexityWarning {
@@ -86,6 +87,7 @@ pub fn run_complexity_analysis(cfg: &Cfg) -> ReportCollection {
             .into_report(),
         );
     }
+    */
     reports
 }
 

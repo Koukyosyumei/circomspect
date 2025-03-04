@@ -59,7 +59,7 @@ impl AnalysisRunner {
         self
     }
 
-    pub fn with_files(mut self, input_files: &[PathBuf]) -> (Self, ReportCollection) {
+    pub fn with_files(mut self, input_files: &[PathBuf], level: usize) -> (Self, ReportCollection) {
         let reports =
             match parser::parse_files(input_files, &self.libraries, &config::COMPILER_VERSION) {
                 ParseResult::Program(program, warnings) => {
@@ -67,6 +67,7 @@ impl AnalysisRunner {
                         program.main_expression(),
                         &mut self.callee_ids,
                         &program,
+                        level,
                     );
                     self.template_asts = program.templates;
                     self.function_asts = program.functions;

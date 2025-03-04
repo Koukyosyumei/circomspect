@@ -43,6 +43,10 @@ struct Cli {
     /// Set curve (BN254, BLS12_381, or GOLDILOCKS)
     #[clap(short = 'c', long = "curve", name = "NAME", default_value = config::DEFAULT_CURVE)]
     curve: Curve,
+
+    /// Maximum recursion depth
+    #[clap(short = 'd', long = "depth", name = "DEPTH", default_value = config::DEFAULT_DEPTH)]
+    depth: usize,
 }
 
 /// Styles the help output for the [`Cli`].
@@ -87,7 +91,7 @@ fn main() -> ExitCode {
     // Set up analysis runner.
     let (mut runner, reports) = AnalysisRunner::new(options.curve)
         .with_libraries(&options.libraries)
-        .with_files(&options.input_files);
+        .with_files(&options.input_files, options.depth);
 
     // Set up writer and write reports to `stdout`.
     let allow_list = options.allow_list.clone();
